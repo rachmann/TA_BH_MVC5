@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>
+                        <form id="rocketForm" action="@Url.Action("DoCommand", "Home", new { service = @ViewContext.RouteData.Values["Controller"].ToString(), handler = @ViewContext.RouteData.Values["Action"].ToString() })" method="post">
+                            <span style="display:inline-block; padding-top: 15px; min-width:260px; padding-bottom: 15px; ">
+                                <i class="fa fa-search"></i>
+                                <input name="goCommand" class="typeahead" style="width: 100%; min-width: 100%;" type="text" placeholder="Command Search . . ." />
+                            </span>
+                            <button style="background: transparent; border: none !important;font-size:0;" id="goButton" name="goButton" type="submit"></button>
+                        </form>
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/typeahead")
+
+    <script type="text/javascript">
+
+        $(function () {
+
+            var engine = new Bloodhound({
+                datumTokenizer: function (datum) {
+                    Bloodhound.tokenizers.whitespace(datum.val);
+                },
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/Control/GetCommands?term=%QUERY',
+                    filter: function(commands) {
+                        return $.map(commands, function(command) {
+                            return { vcmd: command.val.Code };
+                        });
+                    },
+                    wildcard: "%QUERY"
+                }
+            });
+
+            engine.initialize();
+
+            $('.typeahead').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+            {
+                name: 'commands',
+                displayKey: 'vcmd',
+                source: engine.ttAdapter(),
+                templates: {
+                    empty: [
+                        '<div class="noitems">',
+                        'No Items Found',
+                        '</div>'
+                    ].join('\n')
+                }
+            });
+
+            $('.twitter-typeahead').css({ "min-width": "90%" });
+            $('.twitter-typeahead').css({ "width": "90%" });
+
+        });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
