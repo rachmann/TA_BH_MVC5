@@ -27,7 +27,7 @@
                     <li>
                         <form id="rocketForm" action="@Url.Action("DoCommand", "Home", new { service = @ViewContext.RouteData.Values["Controller"].ToString(), handler = @ViewContext.RouteData.Values["Action"].ToString() })" method="post">
                             <span style="display:inline-block; padding-top: 15px; min-width:260px; padding-bottom: 15px; ">
-                                <i class="fa fa-search"></i>
+                                <i class="fa fa-search text-primary"></i>
                                 <input name="goCommand" class="typeahead" style="width: 100%; min-width: 100%;" type="text" placeholder="Command Search . . ." />
                             </span>
                             <button style="background: transparent; border: none !important;font-size:0;" id="goButton" name="goButton" type="submit"></button>
@@ -60,7 +60,7 @@
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '/Control/GetCommands?term=%QUERY',
+                    url: '/Home/GetCommands?term=%QUERY',
                     filter: function(commands) {
                         return $.map(commands, function(command) {
                             return { vcmd: command.val.Code };
