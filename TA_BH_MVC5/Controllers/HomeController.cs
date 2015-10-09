@@ -50,7 +50,15 @@ namespace TA_BH_MVC5.Controllers
         public ActionResult DoCommand(string goCommand, string service, string handler)
         {
             Command result;
-            result = goCommand == null ? new Command { Controller = service, Action = handler } : GetCommand(goCommand);
+            if (goCommand != null)
+            {
+                result = GetCommand(goCommand);
+            }
+
+            if (result == null)
+            {
+                result = new Command {Controller = service, Action = handler};
+            }
             return RedirectToActionPermanent(result.Action, result.Controller);
         }
 
